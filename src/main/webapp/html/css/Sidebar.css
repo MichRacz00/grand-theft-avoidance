@@ -1,0 +1,130 @@
+
+/*Everything on the page*/
+*{
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*Body*/
+body{
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+/*Sidebar*/
+.sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 12%;
+    background: white;
+    padding: 6px 14px;
+    z-index: 99;
+    border-right: .1rem solid #ddd;
+}
+
+.nav_top{
+    text-align: center;
+    padding: 0;
+    margin-top: 40px;
+}
+
+.logo{
+    color:#FF6C37;
+    font-size: 20pt;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: bolder;
+}
+.logo i{
+    font-size: 30px;
+    min-width: 5px;
+}
+
+#logo{
+    width: 50px;
+    height: 50px;
+}
+#avatar{
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin-top: 30px;
+}
+
+.name{
+    color: #FF6C37;
+    font-size: 13pt;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    margin-top: 20px;
+}
+
+.title{
+    color: #BBBBBB;;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-size: 11pt;
+    margin-top: 7px;
+}
+
+/*Pages icons*/
+.sidebar ul{
+    margin-top: 30px;
+    padding-top: 10px;
+}
+
+/*Separate component*/
+.sidebar ul hr{
+    color: #BBBBBB;
+    opacity: 0.4;
+    margin-left: 0;
+    width: 100%;
+    margin-bottom: 15px;
+}
+.sidebar ul li{
+    position: relative;
+    height: 57px;
+    width: 100%;
+    margin: 1px 0px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/*Image of the icon*/
+.sidebar ul li i{
+    font-size: 25px;
+    margin-left: 25px;
+
+}
+
+.sidebar ul li span{
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-size: 12pt;
+    letter-spacing: .02rem;
+    margin-left: 7px;
+    width: 100%;
+}
+
+.selected-tab{
+    border-radius: 30px;
+    background-color: #FF6C37;
+    color: #FFFFFF;
+}
+
+.unselected-tab{
+    color: #BBBBBB;
+}
+
+.unselected-tab:hover{
+    border-radius: 30px;
+    background-color: #BBBBBB;
+    color: #FFFFFF;
+}
+.sidebar ul li:hover .tooltip{
+    transition: all 0.5s ease;
+    opacity: 1;
+    top: 50%
+}

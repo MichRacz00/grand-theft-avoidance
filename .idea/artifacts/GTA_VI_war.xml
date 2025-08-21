@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="GTA-VI:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>GTA-VI</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="GTA-VI.war">
+      <element id="artifact" artifact-name="GTA-VI:war exploded" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,173 @@
+html { overflow: scroll; }
+/*the Dashboard Page*/
+.dashboard-content{
+    margin-left: 12%;
+    width: 100%;
+}
+
+body
+{
+    margin:0;
+    padding:0;
+}
+
+/*HEADER*/
+.header {
+    text-align: left;
+    background: #FFFFFF;
+    color: black;
+}
+#header{
+    margin-left: 3%;
+    margin-top: 1%;
+}
+#dashboard_header
+{
+    color: #023A4F;
+    font-family: "Arial";
+    font-weight: bolder;
+    font-size: 40pt;
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+    padding-top: 20px;
+}
+
+/*BOXES*/
+ .box{
+    height: 250px;
+    width: 250px;
+    background-color: #023a4f;
+    border-radius: 20px;
+    color: white;
+    float: left;
+    margin-left: 3.5%;
+    margin-top: 3%;
+}
+
+#theft_week i, #theft_month i, #hot_time i, #hot_item i {
+    font-size: 30pt;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    color: #87AFBC;
+    margin-top: 18%;
+    margin-right: 5%;
+    float: left;
+    padding-left: 17%;
+}
+
+#theft_today i {
+    font-size: 30pt;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    color: #87AFBC;
+    margin-top: 18%;
+    margin-right: 5%;
+    float: left;
+    padding-left: 9%;
+}
+
+.boxes-description{
+    font-size: 19pt;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    letter-spacing: 1px;
+    color: #87AFBC;
+}
+
+#theft_week .boxes-description, #theft_month .boxes-description {
+    margin-top: 15%;
+}
+
+#theft_today .boxes-description, #hot_time .boxes-description, #hot_item .boxes-description {
+    margin-top: 20%;
+}
+
+.boxes_value{
+    font-size: 50pt;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+#theft_week .boxes_value, #theft_month .boxes_value {
+    font-size: 50pt;
+    width: 100%;
+    font-weight: 900;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    text-align: center;
+    display: block;
+    margin-top: 4%;
+}
+
+#hot_item .boxes_value {
+    font-size: 20pt;
+    width: 100%;
+    font-weight: 900;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    text-align: center;
+    display: block;
+    margin-top: 20%;
+}
+
+#theft_today .boxes_value, #hot_time .boxes_value {
+    font-size: 50pt;
+    width: 100%;
+    font-weight: 900;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    text-align: center;
+    display: block;
+    margin-top: 10%;
+}
+
+/*CHARTS*/
+
+/*Buttons*/
+.chart_buttons {
+    display: inline-block;
+    margin-top: 2.5%;
+    width: 100%;
+}
+
+.chart_buttons button {
+    width: 42%;
+    margin-left: 1%;
+    font-size: 20pt;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    border-radius: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.bar_chart_btn {
+    background-color: white;
+    color: #FF6C37;
+    border: 0.125rem solid #FF6C37;
+}
+
+.line_chart_btn {
+    background-color: #FF6C37;
+    color: white;
+    border-width: 0;
+}
+
+/*Chart*/
+.chart-compare-canvas {
+    width: 100%;
+    margin-left: -8%;
+    margin-top: 1%;
+    opacity: 100%;
+}
+
+#chart-compare{
+    width: 1000px;
+    height: 400px;
+}
+
+
+.barChartCanvas {
+    width: 100%;
+    margin-left: -8%;
+    margin-top: -26.3%;
+    opacity: 0;
+}
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+

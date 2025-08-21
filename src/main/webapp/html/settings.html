@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings</title>
+  <link rel="stylesheet" href="css/articles.css">
+  <link rel="stylesheet" href="css/Sidebar.css">
+</head>
+<body>
+
+<!--SIDEBAR-->
+<div class="sidebar">
+  <div class="nav_top">
+    <div class="logo">
+      <img src="images/OrangeLogo.png" alt="logo" id="logo"/>
+      <span id="comp_name">LOGO</span>
+    </div>
+    <div class="Profile">
+      <img src="images/store_manager.png" alt="avatar" id="avatar"/>
+      <div class="name">
+        <span id="name">Firstname Lastname</span>
+      </div>
+      <div class="title">
+        <span id="title">Store Manager</span>
+      </div>
+    </div>
+  </div>
+
+  <ul class="nav_list">
+
+    <!--Dashboard-->
+    <li class="unselected-tab" onclick="location.href='dashboard.html'">
+      <i class='bx bxs-dashboard'></i>
+      <span class="tab-description">Dashboard</span>
+    </li>
+    <!--Analytics-->
+    <li class="unselected-tab">
+      <i class='bx bx-pie-chart-alt-2'></i>
+      <span class="tab-description">Analytics</span>
+    </li>
+
+    <!--Articles-->
+    <li class="unselected-tab" onclick="location.href='articles.html'">
+      <i class='bx bx-shopping-bag'></i>
+      <span class="tab-description">Articles</span>
+    </li>
+    <!--Setting-->
+    <li class="selected-tab" onclick="location.href='settings.html'">
+      <i class='bx bx-cog'></i>
+      <span class="tab-description">Setting</span>
+    </li>
+
+    <!--Log out-->
+    <li class="unselected-tab" onclick="location.href='login.html'">
+      <i class='bx bx-log-out'></i>
+      <span class="tab-description">Log out</span>
+    </li>
+  </ul>
+</div>
+
+<div id = "header" style="text-align: left;background: #f4f8fd;color: black;">
+  <h1 id ="store_header" style="color: #023A4F;font-family: 'Arial',serif;
+    font-weight: bolder;
+    font-size: 50pt;
+    padding-left: 250px;
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;">Settings</h1>
+</div>
+
+
+
+</body>
+</html>

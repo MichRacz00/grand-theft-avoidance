@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/Sidebar.css">
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2/dist/chart.min.js"></script>
+</head>
+
+<body>
+
+<!--SIDEBAR-->
+<div class="sidebar">
+    <div class = "nav_top">
+        <div class = "logo">
+            <img src="images/OrangeLogo.png" alt="logo" id="logo"/>
+            <span id="comp_name">LOGO</span>
+        </div>
+        <div class = "Profile">
+            <img src="images/store_manager.png" alt="avatar" id="avatar"/>
+            <div class="name">
+                <span id = "name">Firstname Lastname</span>
+            </div>
+            <div class="title">
+                <span id = "title"></span>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav_list" id = "navigation">
+
+        <!--Dashboard-->
+        <li class="selected-tab" id = "dashboard">
+            <i class='bx bxs-dashboard'></i>
+            <span class="tab-description">Dashboard</span>
+        </li>
+        <!--Analytics-->
+        <li class="unselected-tab"  id="analytics" onclick="location.href='storemanager.html'">
+            <i class='bx bx-pie-chart-alt-2' ></i>
+            <span class="tab-description">Analytics</span>
+        </li>
+
+        <!--Articles-->
+        <li class="unselected-tab" id = "articles" onclick="location.href='articles.html'">
+            <i class='bx bx-shopping-bag'></i>
+            <span class="tab-description">Articles</span>
+        </li>
+
+        <hr/>
+        <!--Setting-->
+        <li class="unselected-tab" id = "settings" onclick="location.href='settings.html'">
+            <i class='bx bx-cog' ></i>
+            <span class="tab-description">Setting</span>
+        </li>
+
+
+        <!--Log out-->
+        <li class="unselected-tab" id = "log-out" onclick="location.href='login.html'">
+            <i class='bx bx-log-out' ></i>
+            <span class="tab-description">Log out</span>
+        </li>
+    </ul>
+</div>
+
+
+<!--CONTENT-->
+<div class="dashboard-content">
+    <!--Title-->
+    <div id="header">
+        <span id ="dashboard_header">Dashboard</span>
+    </div>
+
+    <!--Boxes with the values -->
+    <div class="display_boxes">
+        <div id="theft_today" class = "box">
+            <i class='bx bx-calendar'></i>
+            <div class="boxes-description">
+                <span class="boxes-description">Daily Thefts</span>
+            </div>
+            <div class = "boxes_value">
+                <span id = "theft_num" class = "boxes_value"></span>
+            </div>
+
+        </div>
+
+        <div id="theft_week" class = "box">
+            <i class='bx bx-calendar'></i>
+            <div class="boxes-description">
+                <span class="boxes-description">Weekly Thefts</span>
+            </div>
+            <div class = "boxes_value">
+                <span id = "theft_num_week" class = "boxes_value"></span>
+            </div>
+        </div>
+
+        <div id="theft_month" class = "box">
+            <i class='bx bx-calendar'></i>
+            <div class="boxes-description">
+                <span class="boxes-description">Monthly Thefts</span>
+            </div>
+            <div class = "boxes_value">
+                <span id = "theft_num_month" class = "boxes_value"></span>
+            </div>
+        </div>
+
+        <div id="hot_time" class = "box">
+            <i class='bx bx-time'></i>
+            <div class="boxes-description">
+                <span class="boxes-description">Hot Hour</span>
+            </div>
+            <div class = "boxes_value">
+                <span id = "frequent_time" class = "boxes_value"></span>
+            </div>
+        </div>
+
+        <div id="hot_item" class = "box">
+            <i class='bx bx-purchase-tag'></i>
+            <div class="boxes-description">
+                <span class="boxes-description">Hot Item</span>
+            </div>
+            <div class = "boxes_value">
+                <span id = "frequent_item" class = "boxes_value"></span>
+            </div>
+        </div>
+    </div>
+
+    <!--Buttons for the charts-->
+    <div class = "chart_buttons">
+        <button class="line_chart_btn" id = "line_chart_btn" onclick="showLineChart()">
+            <span class="line_chart_btn_txt">Lost Amount / Month</span>
+        </button>
+        <button class="bar_chart_btn" id = "bar_chart_btn" onclick="showBarChart()">
+            <span class="bar_chart_btn_txt">Thefts / Year</span>
+        </button>
+    </div>
+
+    <!--Charts-->
+    <div class = "charts_canvas">
+        <div class = "chart-compare-canvas" id = "chart-compare-canvas">
+            <canvas id="chart-compare"></canvas>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+    //Global variables
+    let storeId;
+    let permission;
+    let lockToken;
+    let baseUri = "http://localhost:8080/GTA_VI/rest/";
+
+    let start = '01-01-21';
+    let end = '02-01-21';
+
+    let chartCompare;
+    let timeFormat = "DD-MM-YY";
+
+    var lineChartShown = true;
+
+    //Display the line chart
+    function showLineChart(){
+        console.log("Line Button Pressed");
+        if(!lineChartShown){
+            console.log("Show Line Chart");
+            var lineBtn = document.getElementById("line_chart_btn");
+            var barBtn = document.getElementById("bar_chart_btn");
+
+            barChart.destroy();
+            createChartAmount();
+            //change buttons
+            lineBtn.style.backgroundColor = "#FF6C37";
+            lineBtn.style.color = "white";
+            lineBtn.style.borderWidth = "0";
+            barBtn.style.color = "#FF6C37";
+            barBtn.style.backgroundColor = "white";
+            barBtn.style.border = "0.125rem solid #FF6C37";
+            lineChartShown = true;
+        }
+    }
+
+    //Display the bar chart
+    function showBarChart(){
+        console.log("Bar Button Pressed");
+        if(lineChartShown){
+            console.log("Show Bar Chart");
+            var lineBtn = document.getElementById("line_chart_btn");
+            var barBtn = document.getElementById("bar_chart_btn");
+
+            chartCompare.destroy();
+            createBarChartAmount();
+            //change buttons
+            barBtn.style.backgroundColor = "#FF6C37";
+            barBtn.style.color = "white";
+            barBtn.style.borderWidth = "0";
+            lineBtn.style.color = "#FF6C37";
+            lineBtn.style.backgroundColor = "white";
+            lineBtn.style.border = "0.125rem solid #FF6C37";
+            lineChartShown = false;
+        }
+    }
+
+
+    buildCharts();
+    getToken();
+
+    //Get the general values to display in the big boxes
+    function buildCharts() {
+        lockToken = true;
+        function checkGetToken() {
+            if(lockToken) {
+                window.setTimeout(checkGetToken, 100);
+            } else {
+                getTheftAmountDay();
+                getTheftAmountWeek();
+                getTheftAmountMonth();
+                getTheftHotTime();
+                getTheftHotItem();
+                updateChartAmount();
+                updateBarChartAmount();
+            }
+        }
+        checkGetToken();
+    }
+
+    //Get the permission level, to grant access to the corresponding features
+    function getToken() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                if (JSON.stringify(myObj) === "false") {
+                    window.location.href = "login.html";
+                }
+                storeId = myObj.store;
+                permission = myObj.permission;
+                lockToken = false;
+                createSidebar();
+            }
+        }
+        let uri = baseUri + "login/getId?token=" + localStorage.getItem("token");
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //update the sidebar based on the permission
+    function createSidebar(){
+        var analytics = document.getElementById("analytics");
+        var title = document.getElementById("title");
+        if(permission === 1){
+            analytics.setAttribute("onclick", "location.href='storemanager.html'")
+            title.innerHTML = "Store Manager";
+        }else if(permission === 2){
+            title.innerText = "Division Manager"
+            var ul = document.getElementById("navigation")
+            var li = document.createElement('li');
+            li.className = "unselected-tab";
+            var icon = document.createElement('i');
+            icon.className = 'bx bx-map';
+            var name = document.createElement('span');
+            name.appendChild(document.createTextNode("Locations"));
+            name.className = "tab-description";
+            li.appendChild(icon);
+            li.appendChild(name);
+            li.setAttribute("onclick", "location.href='divisionmanager.html'")
+            ul.insertBefore(li, ul.children[2]);
+            analytics.setAttribute("onclick", "location.href='locations.html'")
+        }
+    }
+
+    //Gets the Thefts for today
+    function getTheftAmountDay() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                let theftTotal = [];
+                for (const x in myObj) {
+                    theftTotal.push(myObj[x].number);
+                }
+                document.getElementById("theft_num").innerHTML = theftTotal;
+            }
+        }
+        let uri = baseUri + "thefts/dailytotal?date=" + "01-03-21";
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //Gets the Thefts for the week
+    function getTheftAmountWeek() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                let theftTotal = [];
+                for (const x in myObj) {
+                    theftTotal.push(myObj[x].number);
+                }
+                document.getElementById("theft_num_week").innerHTML = theftTotal;
+            }
+        }
+        let uri = baseUri + "thefts/weeklytotal?date=" + "01-03-21";
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //Gets the Thefts for this month
+    function getTheftAmountMonth() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                let theftTotal = [];
+                for (const x in myObj) {
+                    theftTotal.push(myObj[x].number);
+                }
+                document.getElementById("theft_num_month").innerHTML = theftTotal;
+            }
+        }
+        let uri = baseUri + "thefts/monthlytotal?date=" + "01-03-21";
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //Gets the hot time
+    function getTheftHotTime() {
+        let xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.response);
+                let freqTime = myObj.date;
+                document.getElementById("frequent_time").innerHTML = freqTime + ':00';
+            }
+        }
+        let uri = baseUri + "thefts/hothour";
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //Gets the hot item
+    function getTheftHotItem() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.response);
+                let freqItem = myObj.date;
+                document.getElementById("frequent_item").innerHTML = freqItem;
+            }
+        }
+        let uri = baseUri + "thefts/hotarticle";
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+
+    let lock1;
+    let lock2;
+    let lock3;
+    //Line Chart month info with averages included for comparison
+    function updateChartAmount() {
+        lock1 = true;
+        lock2 = true;
+        lock3 = true;
+
+        getNumberOfStores();
+        getDatasetAmount();
+
+
+        function checkStore(){
+            if(lock3){
+                window.setTimeout(checkLock, 100);
+            } else {
+                getDatasetAverage();
+            }
+        }
+
+        function checkLock(){
+            if(lock1 && lock2){
+                window.setTimeout(checkLock, 100);
+            } else {
+                if (typeof chartCompare !== "undefined") {
+                    chartCompare.destroy();
+                }
+            }
+            createChartAmount();
+        }
+        checkStore();
+        checkLock();
+    }
+
+    //Gets the amounts in the database
+    function getDatasetAmount() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                store = [];
+                for (const x in myObj) {
+                    store.push({x: myObj[x].date, y: myObj[x].number});
+                }
+                lock1 = false;
+            }
+        }
+        let uri = baseUri + "thefts/amount?start=" + start + "&end=" + end + "&store=" + storeId;
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //Gets the averages of the amounts from the database
+    function getDatasetAverage() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                average = [];
+                for (const x in myObj) {
+                    average.push({x: myObj[x].date, y: myObj[x].number/storeNumber});
+                }
+                lock2 = false;
+            }
+        }
+        let uri = baseUri + "thefts/sum?start=" + start + "&end=" + end;
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //Gets the number of stores
+    function getNumberOfStores() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                storeNumber = this.responseText;
+            }
+            lock3 = false;
+        }
+        let uri = baseUri + "stores/amount";
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //Create the Line Chart (lost amount during this month)
+    function createChartAmount() {
+        let ctxCompare = document.getElementById('chart-compare').getContext('2d');
+
+        if (typeof chartCompare !== "undefined") {
+            chartCompare.destroy();
+        }
+
+        chartCompare = new Chart(ctxCompare, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: 'Average',
+                        data: average,
+                        order: 2,
+                        borderColor: ['rgb(0,0,100)'],
+                        backgroundColor: ['rgb(0,0,100)'],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Amount',
+                        data: store,
+                        order: 1,
+                        borderColor: ['rgba(255,108,55, 1)'],
+                        backgroundColor: ['rgba(255,108,55, 1)'],
+                        borderWidth: 1
+                    }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Stolen Items per Month'
+                },
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            format: timeFormat,
+                            tooltipFormat: 'll',
+                        },
+                        gridLines: {
+                            display: false
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'value'
+                        },
+                        beginAtZero: true
+                    }]
+                }
+            }
+        });
+    }
+
+
+    //debug & tests below
+    let store;
+    let average;
+    let storeNumber;
+
+
+    //Bar graph for months
+    let monthlyData;
+    let barChart;
+    let monthName;
+    let lock;
+
+    //Gets the lost amount during one month
+    function updateBarChartAmount() {
+        lock = true;
+
+        getDatasetAmount2();
+
+        function checkLock2(){
+            if(lock){
+                window.setTimeout(checkLock2, 100);
+            } else {
+                if (typeof barChart !== "undefined") {
+                    barChart.destroy();
+                }
+            }
+            createBarChartAmount();
+        }
+        checkLock2();
+    }
+
+    function getDatasetAmount2() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                monthlyData = [];
+                monthName = [];
+                for (const x in myObj) {
+                    monthlyData.push(myObj[x].number);
+                    monthName.push(myObj[x].date);
+                }
+                lock = false;
+            }
+        }
+        let uri = baseUri + "thefts/yearlytotal?date=03-01-21";
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //Create the Bar Chart (thefts during one year)
+    function createBarChartAmount() {
+        let ctx = document.getElementById('chart-compare').getContext('2d');
+        if (typeof barChart !== "undefined") {
+            barChart.destroy();
+        }
+        barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: monthName,
+                datasets: [{
+                    data: monthlyData,
+                    label: "Thefts over Months",
+                    borderColor: "rgb(255,108,55)",
+                    backgroundColor: "rgb(255,108,55)",
+                    borderWidth: 1
+                }]
+            },
+        });
+    }
+
+</script>
+</body>
+</html>

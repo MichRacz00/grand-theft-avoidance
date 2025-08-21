@@ -1,0 +1,278 @@
+/*backgorund*/
+body{
+    background-color: white;
+}
+
+/*Entire Page*/
+.division-content{
+    margin-left: 12%;
+}
+
+/*----MAP----*/
+
+#map {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left:10%;
+    width: 90%;
+    height: 100vh;
+    z-index: 1;
+}
+/*markers*/
+.low-marker {
+    background-image: url('Components/low-pin.png');
+    background-size: cover;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.medium-marker {
+    background-image: url('Components/medium-pin.png');
+    background-size: cover;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.high-marker {
+    background-image: url('Components/high-pin.png');
+    background-size: cover;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/*pop-up*/
+.mapboxgl-popup {
+    max-width: 200px;
+}
+
+.mapboxgl-popup-content {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+}
+
+/*Filters Button*/
+.stores-content{
+    z-index: 4;
+    position: fixed;
+    margin-top: 2.4%;
+    left:13%
+}
+.stores-button{
+    border-radius: 25px;
+    background-color: #023A4F;
+    border-width: 0;
+    width: 150px;
+    height: 50px;
+    color: #FFFFFF;
+    font-size: 16pt;
+    font-family: "Arial Rounded MT Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.stores-button:hover{
+    background-color: #137092 ;
+}
+
+
+/*SIDE MENU*/
+.location-content{
+    z-index: 3;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: white;
+    opacity: 0;
+    width:20%;
+    border-radius: 12px;
+}
+.content{
+    margin-top: 10%;
+}
+
+/*Title*/
+.locations-title{
+    font-family: "Arial Rounded MT Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 800;
+    font-size: 30pt;
+    line-height: 1.09;
+    color: #023a4f;
+    margin-left: 2%;
+}
+
+/*Filters Wrapper*/
+.filters{
+    margin-top: 3%;
+}
+
+.filter-options{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 40px;
+    margin-top: 5%;
+}
+
+/*Filters Titles*/
+.filter-options span{
+    color: #313131 ;
+    font-size: 13pt;
+    font-weight: bold;
+    font-family: "Arial Rounded MT Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/*TEXT INPUT FILTERS*/
+.thefts-range-classification input{
+    width: 80%;
+    height: 25%;
+    margin-top: 8%;
+    margin-bottom: -0.5%;
+    border-radius: 3px;
+    border: 0.1rem solid #ddd;
+    font-family: "Arial Rounded MT Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/*CHECKMARK FILTERS*/
+.HighSeverity{
+    position: relative;
+}
+
+input[type = "checkbox"]{
+    display: none;
+}
+
+label{
+    font-weight: lighter;
+    color: #313131 ;
+    font-size: 12pt;
+    font-family: "Arial Rounded MT Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+input[type=checkbox] + label {
+    margin-top: 5px;
+    display: block;
+}
+
+label:before {
+    content: "\2713";
+    border: 0.1rem solid #ddd;
+    border-radius: 5px;
+    width:10px;
+    height: 10px;
+    padding-left: 0.1em;
+    margin-right: 0.2em;
+    vertical-align: bottom;
+    color: transparent;
+}
+
+input[type=checkbox]:checked + label:before {
+    background-color: #ff6c37;
+    color: white;
+    border-color: #ff6c37;
+}
+
+/*FILTERS BUTTONS*/
+
+.filtersButtons{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 7%;
+    margin-left: -2%;
+}
+
+.applyFilters{
+    border-radius: 20pt;
+    border-width: 0;
+    background-color: #023A4F;
+    color: white;
+    font-size: 13pt;
+    font-family: "Arial Rounded MT Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    width: 80%;
+    height: 160%;
+}
+.applyFilters:hover{
+    background-color: #137092 ;
+}
+.resetFilters{
+    border-radius: 20pt;
+    border: 0.15rem solid #023A4F;
+    background-color: #ffffff;
+    color: #023A4F;
+    font-size: 13pt;
+    font-family: "Arial Rounded MT Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    width: 80%;
+    height: 160%;
+}
+.resetFilters:hover{
+    border-color: #137092 ;
+    color: #137092 ;
+}
+
+/*STORES LIST*/
+.stores-results-Wrapper{
+    margin-top: 10%;
+    padding-bottom: 2%;
+    width: 100%;
+}
+
+.ResultList{
+    max-height: 68vh;
+    overflow: auto;
+    border-top: .1rem solid #ddd;
+}
+::-webkit-scrollbar {
+    display: none;
+}
+
+/*Each cell*/
+.ResultList li{
+    border-bottom: .1rem solid #ddd;
+    height: 15%;
+    font-family: "Arial Rounded MT Bold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin-top: 3%;
+}
+
+ul #store-low #severity-division{
+    border-radius: 10px;
+    background-color: #FF9C79;
+    color: #FFFFFF;
+    width: 20%;
+    padding-left: 3%;
+    margin-left: 0;
+}
+
+ul #store-medium #severity-division{
+    border-radius: 10px;
+    background-color: #ff7c4e;
+    color: #FFFFFF;
+    width: 20%;
+    padding-left: 3%;
+    margin-left: 0;
+}
+
+ul #store-high #severity-division{
+    border-radius: 10px;
+    background-color: #fe5b20;
+    color: #FFFFFF;
+    width: 20%;
+    padding-left: 3%;
+    margin-left: 0;
+}
+
+span#store-id{
+    font-size: 13pt;
+    font-weight: 600;
+    color: #023A4F;
+}
+
+span#store-thefts{
+    font-size: 12pt;
+    font-weight: lighter;
+    color: #313131;
+}
+
+
+
+

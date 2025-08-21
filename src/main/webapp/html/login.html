@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<!-- Index page of the Online Book Store. -->
+
+<html lang=”en”>
+<head>
+    <title>LOGIN</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+</head>
+
+<body scroll = "no" style="overflow: hidden">
+
+<div id="login">
+    <h1 id ="login_header">Login</h1>
+
+    <p id = welcome_text>
+        Welcome, please Login to access GTA 6.
+        <br>
+        Did you <a id = "forget_link" href ="https://www.youtube.com/watch?v=dQw4w9WgXcQ">forget your password ?</a>
+    </p>
+    <input type="text" id="userid" name = userid placeholder = "Username">
+    <br>
+    <input type="password" id="password" name = password placeholder = "Password">
+    <br>
+    <button type="button" id="login-confirm">Continue</button>
+
+</div>
+
+<div class="top">
+    <div class="o_sphere"></div>
+    <div class = "b_sphere_1"></div>
+    <div class="b_sphere_2"></div>
+</div>
+
+<div class="bottom">
+    <div class="o_sphere_2"></div>
+    <div class = "b_sphere_3"></div>
+</div>
+
+
+
+<script>
+    let baseUri = "http://localhost:8080/GTA_VI/rest/";
+    document.getElementById("login-confirm").addEventListener("click", sendLogin);
+
+    window.onload = function () {
+        let xhr = new XMLHttpRequest();
+        let token = localStorage.getItem("token");
+        if (token) {
+            let uri = baseUri + "login?token=" + token;
+            xhr.open("DELETE", uri);
+            xhr.send();
+            localStorage.removeItem("token");
+        }
+    }
+
+    function sendLogin() {
+        let login = document.getElementById("userid").value;
+        let password = document.getElementById("password").value;
+        let xhr = new XMLHttpRequest();
+        let myObj;
+        xhr.onreadystatechange = function () {
+            if(this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                let token = myObj.token;
+                let permission = myObj.permission;
+
+                if (token !== "false") {
+                    localStorage.setItem("token", token);
+                    switch (permission) {
+                        case 1:
+                        case 2:
+                            window.location.href = "dashboard.html";
+                            break;
+                        case 3:
+                            window.location.href = "systemadministrator.html";
+                            break;
+                    }
+                } else {
+                    window.location.href = "login.html";
+                }
+
+            }
+        }
+        let uri = baseUri + "login?login="+login+"&password="+password;
+        xhr.open("PUT", uri);
+        xhr.send();
+    }
+</script>
+
+</body>
+</html>

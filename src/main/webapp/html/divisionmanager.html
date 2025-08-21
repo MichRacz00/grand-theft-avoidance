@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8' />
+    <title>Division Manager</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <!--STYLESHEETS-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="css/divisionmanager.css">
+    <link rel="stylesheet" href="css/Sidebar.css">
+    <!--MapBox Links-->
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css' rel='stylesheet' />
+    <!-- Boxicons CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+
+</head>
+<body>
+
+<!--SIDEBAR-->
+<div class="sidebar">
+    <div class = "nav_top">
+        <div class = "logo">
+            <img src="images/OrangeLogo.png" alt="logo" id="logo"/>
+            <span id="comp_name">LOGO</span>
+        </div>
+        <div class = "Profile">
+            <img src="images/store_manager.png" alt="avatar" id="avatar"/>
+            <div class="name">
+                <span id = "name">Firstname Lastname</span>
+            </div>
+            <div class="title">
+                <span id = "title">Division Manager</span>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav_list" id = "navigation">
+
+        <!--Dashboard-->
+        <li class="unselected-tab" onclick="location.href='dashboard.html'">
+            <i class='bx bxs-dashboard'></i>
+            <span class="tab-description">Dashboard</span>
+        </li>
+        <!--Analytics-->
+        <li class="unselected-tab" onclick="location.href='locations.html'">
+            <i class='bx bx-pie-chart-alt-2' ></i>
+            <span class="tab-description">Analytics</span>
+        </li>
+
+        <!--Locations-->
+        <li class="selected-tab" >
+            <i class='bx bx-map'></i>
+            <span class="tab-description">Locations</span>
+        </li>
+
+        <!--Articles-->
+        <li class="unselected-tab" onclick="location.href='articles.html'">
+            <i class='bx bx-shopping-bag'></i>
+            <span class="tab-description">Articles</span>
+        </li>
+
+
+        <hr/>
+        <!--Setting-->
+        <li class="unselected-tab" onclick="location.href='settings.html'">
+            <i class='bx bx-cog' ></i>
+            <span class="tab-description">Setting</span>
+        </li>
+
+        <!--Log out-->
+        <li class="unselected-tab" onclick="location.href='login.html'">
+            <i class='bx bx-log-out' ></i>
+            <span class="tab-description">Log out</span>
+        </li>
+    </ul>
+</div>
+
+<!--CONTENT-->
+<div class="division-content">
+    <!---MAP-->
+    <div id='map'></div>
+    <script>
+        let baseUri = "http://localhost:8080/GTA_VI/rest/";
+
+        getToken();
+
+        let geojson;
+        let centerLoc;
+
+        function getToken() {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                let myObj;
+                if (this.readyState === 4 && this.status === 200) {
+                    myObj = JSON.parse(this.responseText);
+                    if (JSON.stringify(myObj) === "false" || myObj.permission !== 2) {
+                        window.location.href = "login.html";
+                    }
+                }
+            }
+            let uri = baseUri + "login/getId?token=" + localStorage.getItem("token");
+            xhr.open("GET", uri);
+            xhr.send();
+        }
+
+        function addMarkers(){
+            console.log("addMarkers")
+
+            //Initialize the mapbox
+            mapboxgl.accessToken = 'pk.eyJ1IjoidmFsZXJpYXZldmVyaXRhIiwiYSI6ImNrcGYzb25pbzA4NGoyb24wN3A5amt1dTIifQ.0eAA6SoRqW9QDJLkcYB-YA';
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/light-v10',
+                center: centerLoc,
+                zoom: 6
+            });
+
+            //get the result list of stores
+            var list = document.getElementById("list")
+            list.innerHTML = "";
+            // add markers to map
+            geojson.features.forEach(function(marker) {
+                var thefts_num = marker.properties.description;
+                //add shops to the list
+                addShops(marker, list);
+                // create a HTML element for each map marker
+                var el = document.createElement('div');
+                if(thefts_num <= 500){
+                    el.className = 'low-marker';
+                } else if (thefts_num >500 && thefts_num<1000){
+                    el.className = 'medium-marker';
+                } else if (thefts_num >= 100){
+                    el.className = 'high-marker';
+                }
+
+                // make a marker for each feature and add to the map
+                new mapboxgl.Marker(el)
+                    .setLngLat(marker.geometry.coordinates)
+                    .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                        .setHTML('<h3>' + marker.properties.title + '</h3><p> Thefts recorded: ' +marker.properties.description + '</p>'))
+                    .addTo(map);
+            });
+        }
+
+        function getPoints(){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if(this.readyState === 4 && this.status === 200) {
+                    // console.log("getPoints")
+                    var myObj = JSON.parse(this.responseText);
+                    pointsToJSON(myObj)
+                }
+            }
+            xhr.open("GET",baseUri + "stores",true);
+            xhr.send();
+        }
+
+        getPoints();
+
+    </script>
+
+    <!--LOCATIONS-->
+    <!--Button-->
+        <div class = "stores-content" id = "stores-content">
+            <button class="stores-button" id = "stores-button" onclick="transitionStores()">
+                <i class='bx bx-slider-alt'></i>
+                <span class = 'stores-button-text' style="vertical-align: inherit">Filters</span>
+            </button>
+        </div>
+    <!--Form with locations-->
+        <div class="location-content" id = "location-content">
+            <div class="content" id = "content">
+                <!--Title-->
+                <h1 class="locations-title">
+                    <span style="vertical-align: inherit">Stores</span>
+                </h1>
+                <!--Filter Section-->
+                <div class="filters">
+                    <!--Filter Popup-->
+                    <div class="filter-form" id="filter-form">
+                            <div class="filter-content">
+                                <div class="filter-options">
+                                    <!--Classify by severity-->
+                                    <div class="thefts-severity-classification">
+                                        <span class = "severityClassTitle">Thefts Severity</span>
+                                        <div class="HighSeverity">
+                                            <input type="checkbox" id="highSeverity">
+                                            <label for="highSeverity">High</label>
+                                        </div>
+                                        <div class="MediumSeverity">
+                                            <input type="checkbox" id="mediumSeverity">
+                                            <label for="mediumSeverity">Medium</label>
+                                        </div>
+                                        <div class="LowSeverity">
+                                                <input type="checkbox" id="lowSeverity">
+                                                <label for="lowSeverity">Low</label>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="thefts-range-classification">
+                                        <span class="theftsRangeTitle">Thefts Range</span>
+                                        <input type="text" id="minThefts" placeholder="min">
+                                        <input type="text" id="maxThefts" placeholder="max">
+                                    </div>
+                                </div>
+
+                                <div class="filtersButtons">
+                                    <button class="applyFilters" onclick="applyFilters()">Apply</button>
+                                    <button class="resetFilters" onclick="resetFilters()">Reset</button>
+                                </div>
+
+                            </div>
+                    </div>
+                </div>
+                <div class="stores-results-Wrapper">
+                    <ul class="ResultList" id = 'list'></ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    let minMid = 500;
+    let maxMid = 1000;
+    let baseUri = "http://localhost:8080/GTA_VI/rest/";
+
+    getToken();
+    //based on the token and permission level, grant/not permission to this page
+    function getToken() {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                //grant permission to this page if the user is a division manager, otherwise redirect to the login page
+                if (JSON.stringify(myObj) === "false" || myObj.permission !== 2) {
+                    window.location.href = "login.html";
+                }
+            }
+        }
+        let uri = baseUri + "login/getId?token=" + localStorage.getItem("token");
+        xhr.open("GET", uri);
+        xhr.send();
+    }
+
+    //adds the shops to the list and sorts them based on the thefts
+    function addShops(marker, list){
+        //create an HTML list element for each store, based on the thefts
+        var li = document.createElement('li');
+        //store-id
+        var storeID = document.createElement('span');
+        storeID.appendChild(document.createTextNode("Store: " + marker.properties.title));
+        storeID.setAttribute("id", "store-id");
+        //thefts
+        var theftsNum = marker.properties.description;
+        var thefts = document.createElement('span');
+        thefts.appendChild(document.createTextNode("Thefts: " + theftsNum));
+        thefts.setAttribute("id", "store-thefts");
+        //severity
+        var severityDiv = document.createElement("div");
+        severityDiv.setAttribute("id", "severity-division");
+        var severity = document.createElement('span');
+        severity.setAttribute("id", "thefts-severity");
+        //extra elements
+        var breakElem = document.createElement('br');
+        //check the severity of thefts
+        if(theftsNum <= 500){
+            li.setAttribute("id", "store-low");
+            severity.appendChild(document.createTextNode("Low"));
+        } else if (theftsNum > 500 && theftsNum < 1000){
+            li.setAttribute("id", "store-medium");
+            severity.appendChild(document.createTextNode("Medium"));
+        } else if(theftsNum >= 1000){
+            li.setAttribute("id", "store-high");
+            severity.appendChild(document.createTextNode("High"));
+        }
+
+        //add components to the list element
+        severityDiv.appendChild(severity)
+        li.appendChild(storeID);
+        li.appendChild(severityDiv);
+        li.appendChild(breakElem);
+        li.appendChild(breakElem);
+        li.appendChild(thefts);
+        list.appendChild(li);
+    }
+
+    //checks which filters where requested and applies them respectively
+    function applyFilters(){
+        var nothingChecked = true;
+        var lowChecked = document.getElementById("lowSeverity").checked;
+        var mediumChecked = document.getElementById("mediumSeverity").checked;
+        var highChecked = document.getElementById("highSeverity").checked;
+        var min = 0;
+        var max = 1000000;
+        if((lowChecked && mediumChecked && highChecked)||(lowChecked && highChecked)){
+            min = 0;
+            max = 1000000;
+            nothingChecked = false;
+        }else if(lowChecked && mediumChecked){
+            min = 0;
+            max = maxMid;
+            nothingChecked = false;
+        }else if(mediumChecked && highChecked){
+            min = minMid;
+            max = 1000000;
+            nothingChecked = false;
+        }else if(lowChecked) {
+            min = 0;
+            max = minMid;
+            nothingChecked = false;
+        }else if(mediumChecked){
+            min = minMid;
+            max = maxMid;
+            nothingChecked = false;
+        } else if (highChecked){
+            min = maxMid;
+            max = 1000000;
+            nothingChecked = false;
+        }
+        var minInput = document.getElementById("minThefts").value;
+        var maxInput = document.getElementById("maxThefts").value;
+        if(minInput.length !== 0 || maxInput.length !== 0 || !nothingChecked){
+            if (!nothingChecked && minInput.length !== 0  && minInput > min && minInput < max){
+                min = minInput;
+            } else {
+                console.log("Outside the range");
+            }
+            if(!nothingChecked && maxInput.length !== 0 &&  maxInput < max && maxInput > min){
+                max = maxInput;
+            }else {
+                console.log("Outside the range");
+            }
+            if (nothingChecked){
+                min = minInput;
+                max = maxInput;
+                console.log("Only min and max");
+            }
+            console.log("Min: "+ minInput);
+            console.log("Max: " + maxInput);
+            filtering(min, max);
+        }
+        console.log("No filters applied");
+    }
+
+    //resets the filters
+    function resetFilters(){
+        filtering(0, 1000000);
+        document.getElementById("lowSeverity").checked = false;
+        document.getElementById("mediumSeverity").checked = false;
+        document.getElementById("highSeverity").checked = false;
+        document.getElementById("minThefts").value = "";
+        document.getElementById("maxThefts").value = "";
+
+    }
+    //extracts the long and latitude of specific stores, with the amount of thefts, in order to create points on the map
+    function pointsToJSON(myObj){
+        geojson = {};
+        var points = [];
+        let centerDefined = false;
+        for (const x in myObj) {
+            let id = myObj[x].id
+            let lat = myObj[x].latitude;
+            let long = myObj[x].longitude;
+            let num = myObj[x].thefts; //thefts
+            if(!centerDefined){
+                centerLoc = [long,lat];
+                centerDefined = true;
+            }
+            let temp =
+                {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [long,lat]
+                    },
+                    properties: {
+                        title: id,
+                        description: num
+                    }
+                }
+            points.push(temp);
+        }
+        geojson = {type: 'FeatureCollection', features: points};
+        console.log(JSON.stringify(geojson));
+        addMarkers()
+    }
+
+    //filters based on the specified parameters
+    function filtering(minInput, maxInput){
+        let xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function () {
+            let myObj;
+            if (this.readyState === 4 && this.status === 200) {
+                myObj = JSON.parse(this.responseText);
+                console.log(JSON.stringify(myObj));
+                pointsToJSON(myObj);
+            }
+        }
+        let uri = baseUri + "stores/mapfilter?min=" + minInput + "&max=" + maxInput;
+        xhr.open("GET", uri);
+        xhr.send();
+        event.preventDefault();
+    }
+
+    var storesOpened = false;
+
+    //creates the transition effect for the filtering page
+    function transitionStores(){
+        var stores = document.getElementById("location-content");
+        var map = document.getElementById("map");
+        var storesButton = document.getElementById("stores-button");
+        var content = document.getElementById("stores-content");
+        if(!storesOpened){
+            stores.style.transition = "left 0.7s";
+            map.style.transition = "left 0.7s";
+            map.style.left = "33%";
+            stores.style.left = "13%";
+            stores.style.opacity  = "100%";
+            storesOpened = true;
+            storesButton.innerHTML = "X";
+            storesButton.style.borderRadius = "50%";
+            storesButton.style.width = "30px";
+            storesButton.style.height = "30px"
+            content.style.left = "32%";
+        } else {
+            console.log("Filters should Close");
+            stores.style.transition = "left 0.7s";
+            map.style.transition = "left 0.7s";
+            map.style.left = "12%";
+            stores.style.left = "0";
+            stores.style.opacity  = "0%";
+            storesOpened = false;
+            storesButton.innerHTML = "<i class='bx bx-slider-alt'></i>\n"+
+                " <span class = 'stores-button-text' style=\"vertical-align: inherit\">Filters</span>"
+            storesButton.style.borderRadius = "25px"
+            storesButton.style.width = "150px";
+            storesButton.style.height = "50px"
+            content.style.left = "13%"
+
+        }
+    }
+</script>
+</body>
+</html>

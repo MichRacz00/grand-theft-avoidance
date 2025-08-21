@@ -1,0 +1,50 @@
+html { overflow: scroll; }
+
+
+body {
+    background-color: #f4f8fd;
+    font-family: Arial;
+    /*padding-top: 60px;*/
+    margin-left: 240px;
+    position: relative;
+    display: inline-block;
+
+}
+.page-content{
+}
+.header {
+    text-align: left;
+    background: #FFFFFF;
+    color: black;
+
+}
+
+#store_header
+{
+    color: #023A4F;
+    font-family: "Arial";
+    font-weight: bolder;
+    font-size: 50pt;
+    border-bottom: 1px solid black;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+#statistics
+{
+    text-align: left;
+}
+
+.graphs {
+    position: relative;
+    right: 50px;
+    display: inline-block;
+    margin: 4%;
+    align-items: center;
+    align-content: center;
+}
+
+#chart-amount:hover {
+    opacity: 0.7;
+}
+
